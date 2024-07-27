@@ -15,4 +15,5 @@ sdkconfig.old
 # editor config
 main/.clangd
 main/tmp
+main/lib/my_wifi.h
 
