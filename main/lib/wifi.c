@@ -1,8 +1,27 @@
+#include <string.h>
+#include <sys/param.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_system.h"
+#include "esp_log.h"
+#include "esp_netif.h"
+#include "esp_event.h"
+
+#include "nvs.h"
+#include "nvs_flash.h"
+
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include <lwip/netdb.h>
+
 #include <stdio.h>
 #include <string.h>
 #include "sdkconfig.h"
 #include "esp_event.h"
 #include "esp_wifi.h"
+// #include "esp_log.h"
 #include "esp_event_loop.h"
 #include "tcpip_adapter.h"
 #include "freertos/FreeRTOS.h"
@@ -10,6 +29,7 @@
 #include "freertos/event_groups.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
+
 
 #define GOT_IPV4_BIT BIT(0)
 #define GOT_IPV6_BIT BIT(1)
