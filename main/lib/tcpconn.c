@@ -1,6 +1,7 @@
 #include <string.h>
 #include <sys/param.h>
-
+#include <fcntl.h>
+#include <errno.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -9,23 +10,21 @@
 #include "esp_event.h"
 #include "nvs.h"
 #include "nvs_flash.h"
-
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 
-
 struct TCP_CONN {
 	char *msg;
 	int ecode;
 	int sock;
+	int lsock;
 	char addr_str[128];
 	struct sockaddr_in source_addr;
 };
 
-struct TCP_CONN tcp_conn_init(int port){
-
+struct TCP_CONN tcp_conn_init(int port) {
 	int addr_family;
 	int ip_protocol;
 
@@ -41,57 +40,88 @@ struct TCP_CONN tcp_conn_init(int port){
 	ip_protocol = IPPROTO_IP;
 	inet_ntoa_r(destAddr.sin_addr, tcpconn.addr_str, sizeof(tcpconn.addr_str) - 1);
 
-
-	int listen_sock = socket(addr_family, SOCK_STREAM, ip_protocol);
-	if (listen_sock < 0) {
+	tcpconn.lsock = socket(addr_family, SOCK_STREAM, ip_protocol);
+	if (tcpconn.lsock < 0) {
 		sprintf(msg, "Unable to create socket: errno %d\n", errno);
 		tcpconn.msg = msg;
 		return tcpconn;
 	}
 
-	int err = bind(listen_sock, (struct sockaddr *)&destAddr, sizeof(destAddr));
-
+	int err = bind(tcpconn.lsock, (struct sockaddr *)&destAddr, sizeof(destAddr));
 	if (err != 0) {
 		sprintf(msg, "Socket unable to bind: errno %d\n", errno);
 		tcpconn.msg = msg;
 		return tcpconn;
 	}
 
-	err = listen(listen_sock, 1);
+	err = listen(tcpconn.lsock, 1);
 	if (err != 0) {
-		sprintf(msg, "Error occured during listen: errno %d\n", errno);
+		sprintf(msg, "Error occurred during listen: errno %d\n", errno);
 		tcpconn.msg = msg;
 		return tcpconn;
 	}
 
-	uint addrLen = sizeof(tcpconn.source_addr);
-	tcpconn.sock = accept(listen_sock, (struct sockaddr *)&tcpconn.source_addr, &addrLen);
-
-	if (tcpconn.sock < 0) {
-		sprintf(msg, "Unable to accept connection: errno %d\n", errno);
-		tcpconn.msg = msg;
-		return tcpconn;
-	}
+	// Set the listening socket to non-blocking mode
+	int flags = fcntl(tcpconn.lsock, F_GETFL, 0);
+	fcntl(tcpconn.lsock, F_SETFL, flags | O_NONBLOCK);
 
 	tcpconn.ecode = 0;
 	return tcpconn;
 }
 
-
-
-
-int tcp_conn_recv(struct TCP_CONN *tcpconn, char *buffer, int siz){
-	if(tcpconn->ecode != 0){
+int tcp_conn_recv(struct TCP_CONN *tcpconn, char *buffer, int siz) {
+	if (tcpconn->ecode != 0) {
 		return -1;
 	}
 
+	uint addrLen = sizeof(tcpconn->source_addr);
+	tcpconn->sock = accept(tcpconn->lsock, (struct sockaddr *)&tcpconn->source_addr, &addrLen);
+	if (tcpconn->sock < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			// No incoming connection yet
+			return 0;
+		} else {
+			// An error occurred
+			return -1;
+		}
+	}
+
 	int len = recv(tcpconn->sock, buffer, siz - 1, 0);
+	if (len < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			// No data available yet
+			return 0;
+		} else {
+			// An error occurred
+			return -1;
+		}
+	}
 	return len;
 }
 
+int tcp_conn_send(struct TCP_CONN *tcpconn, char *buffer, int siz) {
+	uint addrLen = sizeof(tcpconn->source_addr);
+	tcpconn->sock = accept(tcpconn->lsock, (struct sockaddr *)&tcpconn->source_addr, &addrLen);
+	if (tcpconn->sock < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			// No incoming connection yet
+			return 0;
+		} else {
+			// An error occurred
+			return -1;
+		}
+	}
 
-int tcp_conn_send(struct TCP_CONN *tcpconn, char *buffer, int siz){
 	inet_ntoa_r(((struct sockaddr_in *)&tcpconn->source_addr)->sin_addr.s_addr, tcpconn->addr_str, sizeof(tcpconn->addr_str) - 1);
-	return send(tcpconn->sock, buffer, siz, 0);
+	int len = send(tcpconn->sock, buffer, siz, 0);
+	if (len < 0) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			// Send operation would block
+			return 0;
+		} else {
+			// An error occurred
+			return -1;
+		}
+	}
+	return len;
 }
-
