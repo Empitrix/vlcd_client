@@ -18,6 +18,9 @@ struct VC_COLOR {
 	unsigned char red;
 	unsigned char green;
 	unsigned char blue;
+	// int red;
+	// int green;
+	// int blue;
 };
 
 
@@ -43,14 +46,29 @@ struct VC_SPIXEL_COMM {
 struct VC_FRAME_COMM {
 	int x, y;
 	int width, height;
-	struct VC_COLOR colors[500];
+	// struct VC_COLOR colors[500];
+	// struct VC_COLOR *colors;
+	// struct VC_COLOR **colors;
+	char *buffer;
 };
 
 
-struct VC_READ_COMM {
+
+
+struct VC_READ_OBJ {
 	int x, y;
 	struct VC_COLOR color;
 };
+
+struct VC_READ_COMM {
+	int ecode;
+	int len;
+	struct VC_READ_OBJ *objs;
+	// int x, y;
+	// struct VC_COLOR color;
+};
+
+
 
 struct VC_KEY_COMM {
 	unsigned int key;

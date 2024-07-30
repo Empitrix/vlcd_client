@@ -12,7 +12,13 @@
 #include "lib/commands/init.h"
 #include "lib/commands/spixel.h"
 #include "lib/commands/fill.h"
+#include "lib/commands/frame.h"
+#include "lib/commands/read.h"
 
+
+static int kmode = 0;
+static int fwidth = 0;
+static int fheight = 0;
 
 struct VLCDC vlcdc_init(char *ssid, char *password, int port){
 
@@ -38,6 +44,7 @@ struct VC_KEY_COMM vlcdc_get_key(struct VLCDC vlcdc){
 }
 
 int vlcdc_screen_init(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
+	kmode = comm.mode;
 	return _vc_init_comm(vlcdc, comm);
 }
 
@@ -47,5 +54,17 @@ int vlcdc_screen_spixel(struct VLCDC *vlcdc, struct VC_SPIXEL_COMM comm){
 
 int vlcdc_screen_fill(struct VLCDC *vlcdc, struct VC_FILL_COMM comm){
 	return _vc_fill_comm(vlcdc, comm);
+}
+
+int vlcdc_screen_frame(struct VLCDC *vlcdc, struct VC_FRAME_COMM comm){
+	fwidth = comm.width;
+	fheight = comm.height;
+	return _vc_frame_comm(vlcdc, comm);
+}
+
+struct VC_READ_COMM vlcdc_screen_read(struct VLCDC *vlcdc){
+// void vlcdc_screen_read(struct VLCDC *vlcdc){
+	// printf("[%d, %d]\n", fwidth, fheight);
+	return _vc_read_comm(vlcdc, fwidth, fheight, kmode);
 }
 
