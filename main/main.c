@@ -2,7 +2,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-#include "./vlcdc.c"
+#include "vlcdc.h"
 #include "lib/utils.h"
 #include "lib/commands.h"
 
