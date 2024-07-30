@@ -12,11 +12,10 @@
 void app_main(){
 
 	struct VLCDC vlcdc = vlcdc_init((char *)MY_WIFI_SSID, (char *)MY_WIFI_PASSWORD, PORT);
-	// printf("STATUS: %d\n", status);
 
 	while(1){
 
-		printf("Initializing...\n");  // initialize
+		printf("Init...\n");  // initialize
 		struct VC_INIT_COMM _vic;
 		_vic.width = 400;
 		_vic.height = 400;
@@ -24,8 +23,29 @@ void app_main(){
 		_vic.color.red = 255;
 		_vic.color.green = 255;
 		_vic.color.blue = 0;
-		vlcdc_screen_init(vlcdc, _vic);
-		dlay(1000);
+		vlcdc_screen_init(&vlcdc, _vic);
+		dlay(500);
+
+
+
+		printf("Fill...\n");  // fill
+		struct VC_FILL_COMM _fill;
+		_fill.color.red = 255;
+		_fill.color.green = 0;
+		_fill.color.blue = 0;
+		vlcdc_screen_fill(&vlcdc, _fill);
+		dlay(500);
+
+
+		printf("SPIXEL...\n");  // fill
+		struct VC_SPIXEL_COMM _spixel;
+		_spixel.x = 100;
+		_spixel.y = 100;
+		_spixel.color.red = 0;
+		_spixel.color.green = 0;
+		_spixel.color.blue = 255;
+		vlcdc_screen_spixel(&vlcdc, _spixel);
+		dlay(500);
 
 
 

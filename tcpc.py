@@ -27,7 +27,8 @@ while True:
 	# sock.sendall(msg)
 	data = sock.recv(1024)
 	if not data: break; 
-	print("Reply: " + data.decode())
+	print("GOT SOME")
+	# print("Reply: " + data.decode())
 
 sock.close()
 

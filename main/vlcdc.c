@@ -10,6 +10,8 @@
 
 #include "lib/commands/get_key.h"
 #include "lib/commands/init.h"
+#include "lib/commands/spixel.h"
+#include "lib/commands/fill.h"
 
 
 struct VLCDC vlcdc_init(char *ssid, char *password, int port){
@@ -35,7 +37,15 @@ struct VC_KEY_COMM vlcdc_get_key(struct VLCDC vlcdc){
 	return _vc_get_key(vlcdc);
 }
 
-int vlcdc_screen_init(struct VLCDC vlcdc, struct VC_INIT_COMM comm){
+int vlcdc_screen_init(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
 	return _vc_init_comm(vlcdc, comm);
+}
+
+int vlcdc_screen_spixel(struct VLCDC *vlcdc, struct VC_SPIXEL_COMM comm){
+	return _vc_spixel_comm(vlcdc, comm);
+}
+
+int vlcdc_screen_fill(struct VLCDC *vlcdc, struct VC_FILL_COMM comm){
+	return _vc_fill_comm(vlcdc, comm);
 }
 

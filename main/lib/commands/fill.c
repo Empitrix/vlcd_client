@@ -4,25 +4,16 @@
 #include "../utils.h"
 
 /* _vc_get_key: return struct for pressed key on VLCD */
-int _vc_init_comm(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
+int _vc_fill_comm(struct VLCDC *vlcdc, struct VC_FILL_COMM comm){
 
-	int bufsiz = 9;
-
+	int bufsiz = 4;
 	char init[bufsiz];
 
-	init[0] = '\x01';  // first command
+	init[0] = '\x04';            // index
 	init[1] = comm.color.red;    // value of red color
 	init[2] = comm.color.green;  // value of green color
 	init[3] = comm.color.blue;   // value of blue color
 
-	init[4] = first_h(comm.width);   // width
-	init[5] = second_h(comm.width);  // width
-
-	init[6] = first_h(comm.width);   // height
-	init[7] = second_h(comm.width);  // height
-
-	init[8] = comm.mode;  // color mode
-	
 	return tcp_conn_send(&vlcdc->tconn, init, bufsiz);
 }
 
