@@ -10,8 +10,8 @@ struct VC_READ_COMM _vc_read_comm(struct VLCDC *vlcdc, int width, int height, in
 	struct VC_READ_COMM comm = {1, 0, 0};
 
 	int i;
-	char txbuff[1] = {'\x05'};
-	char rxbuff[1024];
+	unsigned char txbuff[1] = {'\x05'};
+	unsigned char rxbuff[1024];
 
 	comm.objs = (struct VC_READ_OBJ *)malloc(((width * height) * 7) * sizeof(struct VC_READ_OBJ *));
 

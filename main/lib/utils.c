@@ -1,6 +1,6 @@
 #include <freertos/FreeRTOS.h>
 
-int ghex(char c){ return (unsigned char)c; }  // get hex from char
+unsigned char ghex(char c){ return (unsigned char)c; }  // get hex from char
 
 // merge two hex
 int hexm(int primary, int secondary){
@@ -21,7 +21,7 @@ unsigned char second_h(int decimalNumber) {
 }
 
 
-void dlay(int ms){
+void vlcd_dlay(int ms){
 	vTaskDelay(ms / portTICK_PERIOD_MS);
 }
 

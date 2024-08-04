@@ -93,7 +93,7 @@ int tcp_conn_accept(struct TCP_CONN *tcpconn) {
 	return 1; // New connection established
 }
 
-int tcp_conn_recv(struct TCP_CONN *tcpconn, char *buffer, int siz) {
+int tcp_conn_recv(struct TCP_CONN *tcpconn, unsigned char *buffer, int siz) {
 	if (tcpconn->ecode != 0) {
 		return -1;
 	}
@@ -119,7 +119,7 @@ int tcp_conn_recv(struct TCP_CONN *tcpconn, char *buffer, int siz) {
 	return len;
 }
 
-int tcp_conn_send(struct TCP_CONN *tcpconn, char *buffer, int siz) {
+int tcp_conn_send(struct TCP_CONN *tcpconn, unsigned char *buffer, int siz) {
 	if (tcpconn->ecode != 0) {
 		return -1;
 	}

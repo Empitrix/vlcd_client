@@ -8,7 +8,7 @@ int _vc_init_comm(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
 
 	int bufsiz = 9;
 
-	char init[bufsiz];
+	unsigned char init[bufsiz];
 
 	init[0] = '\x01';  // first command
 	init[1] = comm.color.red;    // value of red color
@@ -18,8 +18,8 @@ int _vc_init_comm(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
 	init[4] = first_h(comm.width);   // width
 	init[5] = second_h(comm.width);  // width
 
-	init[6] = first_h(comm.width);   // height
-	init[7] = second_h(comm.width);  // height
+	init[6] = first_h(comm.height);   // height
+	init[7] = second_h(comm.height);  // height
 
 	init[8] = comm.mode;  // color mode
 	

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "lib/my_wifi.h"  // you might don't have this
+// #include "../../../lib/my_wifi.h"  // you might don't have this
 #include "lib/wifi.h"
 
 #include "lib/tcpconn.h"
@@ -48,7 +48,7 @@ int vlcdc_screen_init(struct VLCDC *vlcdc, struct VC_INIT_COMM comm){
 	return _vc_init_comm(vlcdc, comm);
 }
 
-int vlcdc_screen_spixel(struct VLCDC *vlcdc, struct VC_SPIXEL_COMM comm){
+int vlcdc_screen_spixel(struct VLCDC *vlcdc, struct VC_SPIXEL_COMM *comm){
 	return _vc_spixel_comm(vlcdc, comm);
 }
 
@@ -56,15 +56,13 @@ int vlcdc_screen_fill(struct VLCDC *vlcdc, struct VC_FILL_COMM comm){
 	return _vc_fill_comm(vlcdc, comm);
 }
 
-int vlcdc_screen_frame(struct VLCDC *vlcdc, struct VC_FRAME_COMM comm){
-	fwidth = comm.width;
-	fheight = comm.height;
+int vlcdc_screen_frame(struct VLCDC *vlcdc, struct VC_FRAME_COMM *comm){
+	fwidth = comm->width;
+	fheight = comm->height;
 	return _vc_frame_comm(vlcdc, comm);
 }
 
 struct VC_READ_COMM vlcdc_screen_read(struct VLCDC *vlcdc){
-// void vlcdc_screen_read(struct VLCDC *vlcdc){
-	// printf("[%d, %d]\n", fwidth, fheight);
 	return _vc_read_comm(vlcdc, fwidth, fheight, kmode);
 }
 

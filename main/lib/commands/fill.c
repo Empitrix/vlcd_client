@@ -7,7 +7,7 @@
 int _vc_fill_comm(struct VLCDC *vlcdc, struct VC_FILL_COMM comm){
 
 	int bufsiz = 4;
-	char init[bufsiz];
+	unsigned char init[bufsiz];
 
 	init[0] = '\x04';            // index
 	init[1] = comm.color.red;    // value of red color
